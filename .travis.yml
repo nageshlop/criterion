@@ -110,9 +110,7 @@ before_install:
   - HADDOCK=$(echo "/opt/$CC/bin/haddock" | sed 's/-/\//')
   - HCPKG="$HC-pkg"
   - unset CC
-  - CABAL=/opt/ghc/bin/cabal
   - CABAL=/usr/bin/cabal
-    arch: ppc64le
   - CABALHOME=$HOME/.cabal
   - export PATH="$CABALHOME/bin:$PATH"
   - TOP=$(pwd)
