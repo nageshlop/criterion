@@ -89,7 +89,7 @@ jobs:
       os: linux
       arch: ppc64le
     - compiler: ghc-7.10.3
-      addons: {"apt":{"sources":[{"sourceline":"deb [arch : ppc64le] http://ppa.launchpad.net/hvr/ghc/ubuntu xenial main","key_url":"https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x063dab2bdc0b3f9fcebc378bff3aeacef6f88286"}],"packages":["ghc-7.10.3","cabal-install-3.2"]}}
+      addons: {"apt":{"sources":[{"sourceline":"deb http://ppa.launchpad.net/hvr/ghc/ubuntu xenial universe","key_url":"https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x063dab2bdc0b3f9fcebc378bff3aeacef6f88286"}],"packages":["ghc","cabal-install"]}}
       os: linux
       arch: ppc64le
     - compiler: ghc-7.8.4
