@@ -33,9 +33,6 @@ before_cache:
   - rm -rfv $CABALHOME/packages/head.hackage
 jobs:
   include:
-    - compiler: ghc-8.10.1
-      addons: {"apt":{"sources":[{"sourceline":"deb http://ppa.launchpad.net/hvr/ghc/ubuntu xenial main","key_url":"https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x063dab2bdc0b3f9fcebc378bff3aeacef6f88286"}],"packages":["ghc-8.10.1","cabal-install-3.2"]}}
-      os: linux
     - compiler: ghc-7.10.3
       addons: {"apt":{"sources":[{"sourceline":"deb http://ppa.launchpad.net/hvr/ghc/ubuntu xenial main","key_url":"https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x063dab2bdc0b3f9fcebc378bff3aeacef6f88286"}],"packages":["ghc-7.10.3","cabal-install-3.2"]}}
       os: linux
@@ -90,7 +87,7 @@ install:
     echo "  ghc-options: $GHCJOBS +RTS -M6G -RTS" >> $CABALHOME/config
   - cat $CABALHOME/config
   - rm -fv cabal.project cabal.project.local cabal.project.freeze
-  - travis_retry ${CABAL} v2-update -v
+  - travis_retry ${CABAL} update -v
   # Generate cabal.project
   - rm -rf cabal.project cabal.project.local cabal.project.freeze
   - touch cabal.project
@@ -119,14 +116,14 @@ install:
   - if [ -f "./configure.ac" ]; then (cd "." && autoreconf -i); fi
   - if [ -f "./criterion-measurement/configure.ac" ]; then (cd "./criterion-measurement" && autoreconf -i); fi
   - if [ -f "./examples/configure.ac" ]; then (cd "./examples" && autoreconf -i); fi
-  - ${CABAL} v2-freeze $WITHCOMPILER ${TEST} ${BENCH}
+  - ${CABAL} freeze $WITHCOMPILER ${TEST} ${BENCH}
   - "cat cabal.project.freeze | sed -E 's/^(constraints: *| *)//' | sed 's/any.//'"
   - rm  cabal.project.freeze
-  - travis_wait 40 ${CABAL} v2-build $WITHCOMPILER ${TEST} ${BENCH} --dep -j2 all
+  - travis_wait 40 ${CABAL} build $WITHCOMPILER ${TEST} ${BENCH} --dep -j2 all
 script:
   - DISTDIR=$(mktemp -d /tmp/dist-test.XXXX)
   # Packaging...
-  - ${CABAL} v2-sdist all
+  - ${CABAL} sdist all
   # Unpacking...
   - mv dist-newstyle/sdist/*.tar.gz ${DISTDIR}/
   - cd ${DISTDIR} || false
@@ -162,20 +159,20 @@ script:
   - cat cabal.project.local || true
   # Building with tests and benchmarks...
   # build & run tests, build benchmarks
-  - ${CABAL} v2-build $WITHCOMPILER ${TEST} ${BENCH} all
+  - ${CABAL} build $WITHCOMPILER ${TEST} ${BENCH} all
   # Testing...
-  - ${CABAL} v2-test $WITHCOMPILER ${TEST} ${BENCH} all
+  - ${CABAL} test $WITHCOMPILER ${TEST} ${BENCH} all
   # haddock...
-  - ${CABAL} v2-haddock $WITHCOMPILER --with-haddock $HADDOCK ${TEST} ${BENCH} all
+  - ${CABAL} haddock $WITHCOMPILER --with-haddock $HADDOCK ${TEST} ${BENCH} all
   # Constraint sets
   - rm -rf cabal.project.local
   # Constraint set embed-data-files
-  - ${CABAL} v2-build $WITHCOMPILER --enable-tests --enable-benchmarks --constraint='criterion +embed-data-files' all
-  - ${CABAL} v2-test $WITHCOMPILER --enable-tests --enable-benchmarks --constraint='criterion +embed-data-files' all
-  - ${CABAL} v2-haddock $WITHCOMPILER --with-haddock $HADDOCK --enable-tests --enable-benchmarks --constraint='criterion +embed-data-files' all
+  - ${CABAL} build $WITHCOMPILER --enable-tests --enable-benchmarks --constraint='criterion +embed-data-files' all
+  - ${CABAL} test $WITHCOMPILER --enable-tests --enable-benchmarks --constraint='criterion +embed-data-files' all
+  - ${CABAL} haddock $WITHCOMPILER --with-haddock $HADDOCK --enable-tests --enable-benchmarks --constraint='criterion +embed-data-files' all
   # Constraint set fast
-  - ${CABAL} v2-build $WITHCOMPILER --enable-tests --disable-benchmarks --constraint='criterion-measurement +fast' --constraint='criterion +fast' all
-  - ${CABAL} v2-test $WITHCOMPILER --enable-tests --disable-benchmarks --constraint='criterion-measurement +fast' --constraint='criterion +fast' all
+  - ${CABAL} build $WITHCOMPILER --enable-tests --disable-benchmarks --constraint='criterion-measurement +fast' --constraint='criterion +fast' all
+  - ${CABAL} test $WITHCOMPILER --enable-tests --disable-benchmarks --constraint='criterion-measurement +fast' --constraint='criterion +fast' all
 
 # REGENDATA ("0.10",["--output=.travis.yml","--config=cabal.haskell-ci","cabal.project"])
 # EOF
